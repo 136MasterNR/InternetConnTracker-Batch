@@ -14,12 +14,12 @@ IF NOT EXIST "%logFile%" (
 TITLE Now Live Logging - %logFile%
 :REPEAT
 IF NOT EXIST "%logFile%" (
-    ECHO.%colorLogRed%ERROR: [1;37mThe log file was not found.
+    ECHO.%colorLogRed%ERROR: %colorLogRed%The log file was not found.
 	PAUSE>NUL&EXIT
 ) 1>NUL 2>NUL >NUL
 FOR /F "usebackq" %%A IN ('%logFile%') DO SET SIZE=%%~zA
 IF EXIST "%logFile%" IF %SIZE% GTR %maxLogSize% IF "%resetLogIfLarge%"=="FALSE" (
-		ECHO.%colorLogRed%ERROR: [1;37mThe log is too large!
+		ECHO.[0;1mERROR: %colorLogRed%The log is too large!
 		PAUSE>NUL&EXIT
 	) ELSE BREAK>"%logFile%"
 )
@@ -27,8 +27,10 @@ SET LL=
 IF EXIST "%logFile%" (
 	FOR /F "UseBackQ delims==" %%A IN ("%logFile%") DO ( SET "LL=%%A" )
 ) 1>NUL 2>NUL >NUL
+IF NOT EXIST "%logFile%" ( GOTO REPEAT )
+IF NOT DEFINED LL ( GOTO REPEAT )
 IF DEFINED LL IF "%OLL%"=="%LL%" GOTO SKIP
 SET OLL=%LL%
-ECHO.%LL%[1;37m
+ECHO.%LL%
 :SKIP
 GOTO REPEAT
